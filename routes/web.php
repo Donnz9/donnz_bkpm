@@ -19,5 +19,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('/home', HomeController::class);
-Route::resource('/dashboard', DashboardController::class);
+Route::resource('/home', HomeController::class);    //acara7
+Route::resource('/dashboard', DashboardController::class);  //acara8
