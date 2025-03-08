@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\PengalamanKerjaController;
-use App\Http\Controllers\PendidikanController;
+use App\Http\Controllers\Backend\PendidikanController;
 use Illuminate\Support\Facades\Auth;
 
 /*
