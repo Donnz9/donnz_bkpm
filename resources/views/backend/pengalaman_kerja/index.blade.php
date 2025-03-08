@@ -52,12 +52,15 @@
                                     <td>{{ $item->tahun_keluar }}</td>
                                     <td>
                                         <div class="btn-group">
-                                            <a class="btn btn-warning">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
-                                            <button type="submit" class="btn btn-danger">
-                                                <i class="fa fa-trash-o"></i>
-                                            </button>
+                                            <form action="{{ route('pengalaman_kerja.destroy',$item->id) }}" method="POST">
+                                            <a class="btn btn-warning" href="{{ route('pengalaman_kerja.edit',$item->id)}}">
+                                                <i class="fa fa-edit"></i>Edit</a>
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger"
+                                            onclick="return confirm('Apakah anda yakin ingin menghapus data ini?')">
+                                                <i class="fa fa-trash-o"></i>Hapus</button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
