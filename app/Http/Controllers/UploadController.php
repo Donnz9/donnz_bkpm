@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 
 class UploadController extends Controller
 {
-    
+
     public function upload()
     {
         return view('upload');
@@ -89,5 +89,31 @@ class UploadController extends Controller
         } else {
             return redirect(route('upload'))->with('error', 'Data gagal ditambahkan!');
         }
+    }
+
+    public function dropzone_image()
+    {
+        return view('dropzone_image');
+    }
+
+    public function dropzone_image_store(Request $request)
+    {
+        $image = $request->file('file');
+        $imageName = time() . '.' . $image->extension();
+        $image->move(public_path('img/dropzone'), $imageName);
+        return response()->json(['success' => $imageName]);
+    }
+
+    public function dropzone_pdf()
+    {
+        return view('dropzone_pdf');
+    }
+
+    public function dropzone_pdf_store(Request $request)
+    {
+        $pdf = $request->file('file');
+        $pdfName = 'pdf_' . time() . '.' . $pdf->extension();
+        $pdf->move(public_path('pdf/dropzone'), $pdfName);
+        return response()->json(['success' => $pdfName]);
     }
 }
