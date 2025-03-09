@@ -71,12 +71,10 @@
                                     <td>{{ $item->tahun_keluar }}</td>
                                     <td>
                                         <div class="btn-group">
-                                            <a class="btn btn-warning" href="">
-                                                <i class="fa fa-edit">Edit</i>
-                                            </a>
+                                            <a class="btn btn-warning" href="{{ route('pendidikan.edit',$item->id) }}">
+                                                <i class="fa fa-edit">Edit</i></a>
+                                            {{-- <button type="submit" class="btn btn-danger"><i class="fa fa-edit"></i></button> --}}
                                             <form method="POST" action="">
-                                                @csrf
-                                                @method('DELETE')
                                                 <button type="submit" class="btn btn-danger">
                                                     <i class="fa fa-trash-o">Hapus</i>
                                                 </button>
