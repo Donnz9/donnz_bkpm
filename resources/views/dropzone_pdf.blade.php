@@ -11,8 +11,11 @@
         <div class="row">
             <div class="col-md-12">
                 <h1 class="text-center">Dropzone PDF Upload in Laravel</h1><br>
-                <form action="{{ route('dropzone_pdf.store') }}" method="post" name="file" files="true" 
-                    enctype="multipart/form-data" class="dropzone" id="pdf-upload">
+                <form action="{{ route('dropzone_pdf.store') }}" 
+                    method="post" 
+                    enctype="multipart/form-data" 
+                    class="dropzone" 
+                    id="pdf-upload">
                     @csrf
                 </form>
                 <button type="button" id="button" class="btn btn-primary">Upload</button>
@@ -22,25 +25,33 @@
     <script type="text/javascript">
         Dropzone.autoDiscover = false;
         var myDropzone = new Dropzone('#pdf-upload', {
-            maxFilesize: 1,
+            paramName: "file",
+            maxFilesize: 10,
+            maxFiles: 5,
             acceptedFiles: ".pdf",
+            uploadMultiple: true,
             addRemoveLinks: true,
             autoProcessQueue: false,
+            parallelUploads: 5,
             init: function () {
-                // AKSI KETIKA BUTTON UPLOAD DI KLIK
-                $("#button").click(function (e) {
+                let dropzoneInstance = this;
+
+                document.getElementById("button").addEventListener("click", function (e) {
                     e.preventDefault();
-                    myDropzone.processQueue();
+                    dropzoneInstance.processQueue();
+                });
+
+                this.on("error", function(file, response) {
+                    console.error("Upload gagal:", response);
+                    alert("Upload gagal untuk file: " + file.name);
+                });
+
+                this.on("successmultiple", function(files, response) {
+                    console.log("Upload sukses:", response);
+                    alert("Semua file berhasil diupload!");
+                    dropzoneInstance.removeAllFiles();
                 });
             }
-        });
-    
-        this.on('sending', function(file, xhr, formData) {
-            // Tambahkan semua input form ke formData Dropzone yang akan POST
-            var data = $('#pdf-upload').serializeArray();
-            $.each(data, function(key, el) {
-                formData.append(el.name, el.value);
-            });
         });
     </script>    
 </body>

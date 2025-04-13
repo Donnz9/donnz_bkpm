@@ -44,7 +44,7 @@ class UploadController extends Controller
         echo 'File Mime Type: ' . $file->getMimeType();
 
         // isi dengan nama folder tempat kemana file diupload
-        $tujuan_upload = 'data_file';
+        $tujuan_upload = public_path('data_file');
 
         // upload file
         $file->move($tujuan_upload, $file->getClientOriginalName());
@@ -57,38 +57,43 @@ class UploadController extends Controller
             'keterangan' => 'required',
         ]);
 
-        // TENTUKAN PATH LOKASI UPLOAD
-        $path = public_path('img/logo');
+        // penyimpanan
+        $originalPath = public_path('data_file');
+        $resizePath = public_path('img/logo');
 
-        // JIKA FOLDERNYA BELUM ADA
-        if (!File::isDirectory($path)) {
-            // MAKA FOLDER TERSEBUT AKAN DIBUAT
-            File::makeDirectory($path, 0777, true);
+        // mastikan folder ada
+        if (!File::isDirectory($originalPath)) {
+            File::makeDirectory($originalPath, 0777, true);
         }
 
-        // MENGAMBIL FILE IMAGE DARI FORM
+        if (!File::isDirectory($resizePath)) {
+            File::makeDirectory($resizePath, 0777, true);
+        }
+
+        // ammbil file dari request
         $file = $request->file('file');
 
-        // MEMBUAT NAME FILE DARI GABUNGAN TANGGAL DAN UNIQID()
-        $fileName = 'logo_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        // nyimpan file asli ke data_file
+        $originalFileName = $file->getClientOriginalName();
+        $file->move($originalPath, $originalFileName);
 
-        // MEMBUAT CANVAS IMAGE SEBESAR DIMENSI
+        // Ambil ulang file dari data_file untuk proses resize
+        $originalFilePath = $originalPath . '/' . $originalFileName;
+
+        // Buat nama file hasil resize
+        $resizeFileName = 'logo_' . uniqid() . '.' . pathinfo($originalFileName, PATHINFO_EXTENSION);
+
+        // Proses resize
         $canvas = Image::canvas(200, 200);
-
-        // RESIZE IMAGE SESUAI DIMENSI DENGAN MEMPERTAHANKAN RATIO
-        $resizeImage = Image::make($file)->resize(null, 200, function ($constraint) {
+        $resizeImage = Image::make($originalFilePath)->resize(null, 200, function ($constraint) {
             $constraint->aspectRatio();
         });
-
-        // MEMASUKAN IMAGE YANG TELAH DIRESIZE KE DALAM CANVAS
         $canvas->insert($resizeImage, 'center');
 
-        // SIMPAN IMAGE KE FOLDER
-        if ($canvas->save($path . '/' . $fileName)) {
-            return redirect(route('upload'))->with('success', 'Data berhasil ditambahkan!');
-        } else {
-            return redirect(route('upload'))->with('error', 'Data gagal ditambahkan!');
-        }
+        // Simpan hasil resize ke img/logo
+        $canvas->save($resizePath . '/' . $resizeFileName);
+
+        return redirect(route('upload'))->with('success', 'Data berhasil ditambahkan!');
     }
 
     public function dropzone_image()
@@ -98,10 +103,20 @@ class UploadController extends Controller
 
     public function dropzone_image_store(Request $request)
     {
-        $image = $request->file('file');
-        $imageName = time() . '.' . $image->extension();
-        $image->move(public_path('img/dropzone'), $imageName);
-        return response()->json(['success' => $imageName]);
+        if (!$request->hasFile('file')) {
+            return response()->json(['message' => 'Tidak ada file yang terupload!'], 400);
+        }
+
+        $uploadedFiles = $request->file('file');
+        $savedFiles = [];
+
+        foreach ($uploadedFiles as $image) {
+            $imageName = time() . '_' . uniqid() . '.' . $image->extension();
+            $image->move(public_path('img/dropzone'), $imageName);
+            $savedFiles[] = $imageName;
+        }
+
+        return response()->json(['success' => $savedFiles]);
     }
 
     public function dropzone_pdf()
@@ -111,9 +126,19 @@ class UploadController extends Controller
 
     public function dropzone_pdf_store(Request $request)
     {
-        $pdf = $request->file('file');
-        $pdfName = 'pdf_' . time() . '.' . $pdf->extension();
-        $pdf->move(public_path('pdf/dropzone'), $pdfName);
-        return response()->json(['success' => $pdfName]);
+        if (!$request->hasFile('file')) {
+            return response()->json(['message' => 'Tidak ada file yang terupload!'], 400);
+        }
+    
+        $uploadedFiles = $request->file('file');
+        $savedFiles = [];
+    
+        foreach ($uploadedFiles as $pdf) {
+            $pdfName = 'pdf_' . time() . '_' . uniqid() . '.' . $pdf->extension();
+            $pdf->move(public_path('pdf/dropzone'), $pdfName);
+            $savedFiles[] = $pdfName;
+        }
+    
+        return response()->json(['success' => $savedFiles]);
     }
 }

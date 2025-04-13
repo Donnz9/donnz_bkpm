@@ -26,8 +26,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('/home', HomeController::class);    //acara7
-Route::resource('/dashboard', DashboardController::class);  //acara8
+Route::resource('/homes', HomeController::class);    //acara7 butterfly
+Route::resource('/dashboard', DashboardController::class);  //acara8 niceadmin
 
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

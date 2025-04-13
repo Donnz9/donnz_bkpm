@@ -48,7 +48,7 @@
                             @foreach ($pendidikan as $item)
                                 <tr>
                                     <td>{{ $item->nama }}</td>
-                                    <td>
+                                    {{-- <td>
                                         @if ($item->tingkatan == 1)
                                             TK
                                         @elseif ($item->tingkatan == 2)
@@ -66,15 +66,19 @@
                                         @elseif ($item->tingkatan == 8)
                                             S3
                                         @endif
-                                    </td>
+                                    </td> --}}
+                                    <td>{{ $item->tingkatan }}</td>
                                     <td>{{ $item->tahun_masuk }}</td>
                                     <td>{{ $item->tahun_keluar }}</td>
                                     <td>
                                         <div class="btn-group">
+                                            <form action="{{ route('pendidikan.destroy',$item->id) }}" method="POST">
                                             <a class="btn btn-warning" href="{{ route('pendidikan.edit',$item->id) }}">
                                                 <i class="fa fa-edit">Edit</i></a>
                                             {{-- <button type="submit" class="btn btn-danger"><i class="fa fa-edit"></i></button> --}}
-                                            <form method="POST" action="">
+                                            @csrf
+                                            @method('DELETE')
+                                            {{-- <form method="POST" action=""> --}}
                                                 <button type="submit" class="btn btn-danger">
                                                     <i class="fa fa-trash-o">Hapus</i>
                                                 </button>

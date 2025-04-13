@@ -11,7 +11,7 @@ class PendidikanController extends Controller
 {
     public function index()
     {
-        $pendidikan = DB::table('pendidikan')->get();
+        $pendidikan = Pendidikan::get();
         return view('backend.pendidikan.index',compact('pendidikan'));
     }
 
@@ -23,35 +23,30 @@ class PendidikanController extends Controller
 
     public function store(Request $request)
     {
-        // Pendidikan::create($request->all());
-
-        DB::table('pendidikan')->insert([
-            'nama' => $request->nama,
-            'tingkatan' => $request->tingkatan,
-            'tahun_masuk' => $request->tahun_masuk,
-            'tahun_keluar' => $request->tahun_keluar,
-        ]);
+        Pendidikan::create($request->all()); 
 
         return redirect()->route('pendidikan.index')
             ->with('success', 'Data Pendidikan baru telah berhasil disimpan.');
     }
 
-    public function edit($id)
+    public function edit(Pendidikan $pendidikan)
     {
-        $pendidikan = DB::table('pendidikan')->where('id', $id)->first();
         return view('backend.pendidikan.create', compact('pendidikan'));
     }
 
-    public function update(Request $request)
+    public function update(Request $request, Pendidikan $pendidikan)
     {
-        DB::table('pendidikan')->where('id', $request->id)->update([
-            'nama' => $request->nama,
-            'tingkatan' => $request->tingkatan,
-            'tahun_masuk' => $request->tahun_masuk,
-            'tahun_keluar' => $request->tahun_keluar,
-        ]);
+        $pendidikan->update($request->all());
 
         return redirect()->route('pendidikan.index')
             ->with('success', 'Pendidikan berhasil diperbaharui.');
+    }
+
+    public function destroy($id)
+    {
+        DB::table('pendidikan')->where('id', $id)->delete();
+
+        return redirect()->route('pendidikan.index')
+            ->with('success', 'Data Pendidikan berhasil dihapus');
     }
 }

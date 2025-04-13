@@ -24,7 +24,10 @@
     </div>
     <script type="text/javascript">
         Dropzone.options.imageUpload = {
+            paramName: "file",
             maxFilesize: 10,
+            parallelUploads: 10,
+            uploadMultiple: true,
             acceptedFiles: ".jpeg,.jpg,.png,.gif",
             addRemoveLinks: true,
             createImageThumbnails: true,
@@ -38,12 +41,8 @@
                     myDropzone.processQueue();
                 });
     
-                this.on('sending', function(file, xhr, formData) {
-                    // Tambahkan semua input form ke formData Dropzone yang akan POST
-                    var data = $('#image-upload').serializeArray();
-                    $.each(data, function(key, el) {
-                        formData.append(el.name, el.value);
-                    });
+                this.on('queuecomplete', function() {
+                    alert("Semua gambar berhasil diupload!");
                 });
             }
         };
